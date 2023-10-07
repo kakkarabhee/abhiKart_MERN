@@ -18,5 +18,5 @@ app.use("/api", router)
 
 app.use('*', express.static(path.join(__dirname,'build')))
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 10000
 app.listen(PORT, () => console.log(`Server is Running at port no ${PORT}`))
