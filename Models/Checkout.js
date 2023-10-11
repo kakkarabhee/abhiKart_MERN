@@ -5,10 +5,6 @@ const CheckoutSchema = new mongoose.Schema({
         type: String,
         required: [true, "Userid can't be Blank!!"]
     },
-    username: {
-        type: String,
-        required: [true, "Username can't be Blank!!"]
-    },
     paymentmode: {
         type: String,
         default: "COD"
