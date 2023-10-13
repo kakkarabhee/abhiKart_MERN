@@ -1,6 +1,7 @@
 const Brand = require("../Models/Brand")
 const fs = require("fs")
 
+
 async function createBrand(req, res) {
     try {
         let data = new Brand(req.body)
@@ -19,7 +20,6 @@ async function createBrand(req, res) {
             res.status(500).send({ result: "Fail", message: "Internal Server Error" })
     }
 }
-
 async function getAllBrand(req, res) {
     try {
         let data = await Brand.find().sort({ "_id": -1 })
@@ -55,11 +55,12 @@ async function updateBrand(req, res) {
                 data.brandlogo = req.file.filename
             }
             await data.save()
-            res.send({ result: "Done", message: "Record is Updated" })
+            res.send({ result: "Done", message: "Record is Updated",data:data})
         }
         else
             res.send({ result: "Fail", message: "Record not Found" })
     } catch (error) {
+        console.log(error);
         if (error.keyValue)
             res.status(400).send({ result: "Fail", message: "Name Must Be Unique" })
         else if (error.errors.name)

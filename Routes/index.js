@@ -7,9 +7,9 @@ const [createSubcategory, getAllSubcategory, getSingleSubcategory, updateSubcate
 const [createBrand, getAllBrand, getSingleBrand, updateBrand, deleteBrand] = require("../Controller/BrandController")
 const [createCart, getAllCart, getSingleCart, updateCart, deleteCart] = require("../Controller/CartController")
 const [createProduct, getAllProduct, getSingleProduct, updateProduct, deleteProduct, searchProduct] = require("../Controller/ProductController")
-const [createUser, getAllUser, getSingleUser, updateUser, deleteUser, login, forgetPassword1,forgetPassword2,forgetPassword3] = require("../Controller/UserController")
+const [createUser, getAllUser, getSingleUser, updateUser, deleteUser, login, forgetPassword1, forgetPassword2, forgetPassword3] = require("../Controller/UserController")
 const [createWishlist, getAllWishlist, deleteWishlist] = require("../Controller/WishlistController")
-const [createCheckout, getAllCheckout, getUserAllCheckout, getSingleCheckout, updateCheckout, deleteCheckout, order,verify] = require("../Controller/CheckoutController")
+const [createCheckout, getAllCheckout, getUserAllCheckout, getSingleCheckout, updateCheckout, deleteCheckout, order, verifyOrder] = require("../Controller/CheckoutController")
 const [createContact, getAllContact, getSingleContact, updateContact, deleteContact] = require("../Controller/ContactController")
 const [createNewsletter, getAllNewsletter, deleteNewsletter] = require("../Controller/NewsletterController")
 
@@ -27,6 +27,32 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage })
+
+const storage1 = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/users')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname)
+    },
+    limits: {
+        fieldSize: 10485760,
+    }
+})
+const upload1 = multer({ storage: storage1 })
+
+const storage2 = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/brands')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname)
+    },
+    limits: {
+        fieldSize: 10485760,
+    }
+})
+const upload2 = multer({ storage: storage2 })
 
 
 async function verifyAdmin(req, res, next) {
@@ -69,33 +95,6 @@ async function verifyBoth(req, res, next) {
 }
 
 
-const storage1 = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/users')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + file.originalname)
-    },
-    limits: {
-        fieldSize: 10485760,
-    }
-})
-const upload1 = multer({ storage: storage1 })
-
-const storage2 = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/brands')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + file.originalname)
-    },
-    limits: {
-        fieldSize: 10485760,
-    }
-})
-const upload2 = multer({ storage: storage2 })
-
-
 
 const router = express.Router()
 
@@ -113,10 +112,10 @@ router.put("/subcategory/:_id", verifyAdmin, updateSubcategory)
 router.delete("/subcategory/:_id", verifyAdmin, deleteSubcategory)
 
 
-router.post("/brand", upload2.single("brandlogo"), verifyAdmin, createBrand)
+router.post("/brand", upload2.single("pic"), verifyAdmin, createBrand)
 router.get("/brand", getAllBrand)
 router.get("/brand/:_id", getSingleBrand)
-router.put("/brand/:_id", upload2.single("brandlogo"), verifyAdmin, updateBrand)
+router.put("/brand/:_id", upload1.single("pic"), verifyAdmin, updateBrand)
 router.delete("/brand/:_id", verifyAdmin, deleteBrand)
 
 
@@ -164,13 +163,13 @@ router.delete("/wishlist/:_id", verifyBuyer, deleteWishlist)
 
 
 router.post("/checkout", verifyBuyer, createCheckout)
-router.get("/checkout/", verifyAdmin, getAllCheckout)
+router.get("/checkout", verifyAdmin, getAllCheckout)
 router.get("/checkout/:userid", verifyBuyer, getUserAllCheckout)
 router.get("/checkout/single/:_id", verifyAdmin, getSingleCheckout)
 router.put("/checkout/:_id", verifyAdmin, updateCheckout)
 router.delete("/checkout/:_id", verifyAdmin, deleteCheckout)
-// router.post("/checkout/order", verifyBuyer, order)
-// router.post("/checkout/verify", verifyBuyer, verify)
+router.post("/checkout/order", verifyBuyer, order)
+router.post("/checkout/order-verify", verifyBuyer, verifyOrder)
 
 
 router.post("/contact", createContact)
@@ -182,7 +181,7 @@ router.delete("/contact/:_id", verifyAdmin, deleteContact)
 
 
 router.post("/newsletter", createNewsletter)
-router.get("/newsletter",  getAllNewsletter)
+router.get("/newsletter", getAllNewsletter)
 router.delete("/newsletter/:_id", verifyAdmin, deleteNewsletter)
 
 
